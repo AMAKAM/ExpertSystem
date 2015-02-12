@@ -1,0 +1,434 @@
+;(open "input.txt" input "r")
+;(open "output.txt" output "w")
+
+(deftemplate direction
+	(slot name)
+	(slot color)
+	(slot count))
+
+(deftemplate state
+	(slot name)
+	(slot occupied))
+
+(deftemplate cars-present
+	(slot direction))
+
+(deffacts initial
+	(direction (name East-West) (color Green) (count 0))
+	(direction (name North-South) (color Red) (count 0))
+	(state (name 1) (occupied No))
+	(state (name 2) (occupied No))
+	(state (name 3) (occupied No))
+	(state (name 4) (occupied No))
+	(state (name 5) (occupied No))
+	(state (name 6) (occupied No))
+	(state (name 7) (occupied No))
+	(state (name 8) (occupied No))
+	(start yes)
+)
+
+(deffunction Readline 
+	(?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)
+
+	(bind ?first (read input))
+	(bind ?second (read input))
+	(bind ?third (read input))
+	(bind ?fourth (read input))
+	(bind ?fifth (read input))
+	(bind ?sixth (read input))
+	(bind ?seventh (read input))
+	(bind ?eighth (read input))
+
+	(if (= ?first 1) then (modify ?s1 (occupied Yes)))
+	(if (= ?second 1) then (modify ?s2 (occupied Yes)))
+	(if (= ?third 1) then (modify ?s3 (occupied Yes)))
+	(if (= ?fourth 1) then (modify ?s4 (occupied Yes)))
+	(if (= ?fifth 1) then (modify ?s5 (occupied Yes)))
+	(if (= ?sixth 1) then (modify ?s6 (occupied Yes)))
+	(if (= ?seventh 1) then (modify ?s7 (occupied Yes)))
+	(if (= ?eighth 1) then (modify ?s8 (occupied Yes)))
+
+)
+
+(defrule Start
+	(declare (salience 10000))
+	?s1 <- (state (name 1) (occupied No))
+	?s2 <- (state (name 2) (occupied No))
+	?s3 <- (state (name 3) (occupied No))
+	?s4 <- (state (name 4) (occupied No))
+	?s5 <- (state (name 5) (occupied No))
+	?s6 <- (state (name 6) (occupied No))
+	?s7 <- (state (name 7) (occupied No))
+	?s8 <- (state (name 8) (occupied No))
+	?f0 <- (start yes)
+=> 
+	(retract ?f0)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule Check1
+	(state (name 1) (occupied Yes))
+	(not (cars-present (direction East-West)))
+=>
+	(assert (cars-present (direction East-West))))
+(defrule Check2
+	(state (name 2) (occupied Yes))
+	(not (cars-present (direction East-West)))
+=>
+	(assert (cars-present (direction East-West))))
+(defrule Check3
+	(state (name 3) (occupied Yes))
+	(not (cars-present (direction East-West)))
+=>
+	(assert (cars-present (direction East-West))))
+(defrule Check4
+	(state (name 4) (occupied Yes))
+	(not (cars-present (direction East-West)))
+=>
+	(assert (cars-present (direction East-West))))
+(defrule Check5
+	(state (name 5) (occupied Yes))
+	(not (cars-present (direction North-South)))
+=>
+	(assert (cars-present (direction North-South))))
+(defrule Check6
+	(state (name 6) (occupied Yes))
+	(not (cars-present (direction North-South)))
+=>
+	(assert (cars-present (direction North-South))))
+(defrule Check7
+	(state (name 7) (occupied Yes))
+	(not (cars-present (direction North-South)))
+=>
+	(assert (cars-present (direction North-South))))
+(defrule Check8
+	(state (name 8) (occupied Yes))
+	(not (cars-present (direction North-South)))
+=>
+	(assert (cars-present (direction North-South))))
+
+(defrule yellow1
+	?f0 <- (direction (name East-West) (color Yellow) (count 0))
+	?f1 <- (direction (name North-South) (color Red) (count ?count))
+=> 
+	(modify ?f0 (color Red) (count 0))
+	(modify ?f1 (color Green) (count 0))
+)
+
+(defrule yellow2
+	?f0 <- (direction (name East-West) (color Red) (count ?count))
+	?f1 <- (direction (name North-South) (color Yellow) (count 0))
+=> 
+	(modify ?f0 (color Green) (count 0))
+	(modify ?f1 (color Red) (count 0))
+)
+
+(defrule no-cars1
+	(not (cars-present (direction East-West)))
+	(not (cars-present (direction North-South)))
+	?f0 <- (direction (name East-West) (color Green) (count 4))
+	(direction (name North-South) (color Red) (count ?count))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f0 (color Yellow) (count 0))
+	(printout output "0 1 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule no-cars2
+	(not (cars-present (direction East-West)))
+	(not (cars-present (direction North-South)))
+	(direction (name East-West) (color Red) (count ?count))
+	?f0 <- (direction (name North-South) (color Green) (count 4))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+	
+=>
+	(modify ?f0 (color Yellow) (count 0))
+	(printout output "0 0 1 0 1 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule no-cars3
+	(not (cars-present (direction East-West)))
+	(not (cars-present (direction North-South)))
+	?f0 <- (direction (name East-West) (color Green) (count ?count))
+	(direction (name North-South) (color Red) (count 0))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f0 (count (+ ?count 1)))
+	(printout output "1 0 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule no-cars4
+	(not (cars-present (direction East-West)))
+	(not (cars-present (direction North-South)))
+	(direction (name East-West) (color Red) (count 0))
+	?f0 <- (direction (name North-South) (color Green) (count ?count))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f0 (count (+ ?count 1)))
+	(printout output "0 0 1 1 0 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule R1
+	?f0 <- (cars-present (direction East-West))
+	(not (cars-present (direction North-South)))
+	?f1 <- (direction (name East-West) (color Green) (count 4))
+	
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?s1 (occupied No))
+	(modify ?s2 (occupied No))
+	(modify ?s3 (occupied No))
+	(modify ?s4 (occupied No))
+	(retract ?f0)
+	(printout output "1 0 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule R2
+	(not (cars-present (direction East-West)))
+	?f0 <- (cars-present (direction North-South))
+	?f1 <- (direction (name North-South) (color Green) (count 4))
+	
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?s5 (occupied No))
+	(modify ?s6 (occupied No))
+	(modify ?s7 (occupied No))
+	(modify ?s8 (occupied No))
+	(retract ?f0)
+	(printout output "0 0 1 1 0 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule R3
+	?f0 <- (cars-present (direction East-West))
+	(not (cars-present (direction North-South)))
+	?f1 <- (direction (name East-West) (color Green) (count ?x))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (count (+ ?x 1)))
+	(modify ?s1 (occupied No))
+	(modify ?s2 (occupied No))
+	(modify ?s3 (occupied No))
+	(modify ?s4 (occupied No))
+	(retract ?f0)
+	(printout output "1 0 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule R4
+	(not (cars-present (direction East-West)))
+	?f0 <- (cars-present (direction North-South))
+	?f1 <- (direction (name North-South) (color Green) (count ?x))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (count (+ ?x 1)))
+	(modify ?s5 (occupied No))
+	(modify ?s6 (occupied No))
+	(modify ?s7 (occupied No))
+	(modify ?s8 (occupied No))
+	(retract ?f0)
+	(printout output "0 0 1 1 0 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule R5
+	(cars-present (direction East-West))
+	(not (cars-present (direction North-South)))
+	(direction (name East-West) (color Red) (count 0))
+	?f1 <- (direction (name North-South) (color Green) (count ?x))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (color Yellow) (count 0))
+	(printout output "0 0 1 0 1 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule R6
+	(not (cars-present (direction East-West)))
+	(cars-present (direction North-South))
+	?f1 <- (direction (name East-West) (color Green) (count ?x))
+	(direction (name North-South) (color Red) (count 0))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (color Yellow) (count 0))
+	(printout output "0 1 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)	
+)
+
+(defrule all-cars1
+	(cars-present (direction East-West))
+	(cars-present (direction North-South))
+	?f1 <- (direction (name East-West) (color Green) (count 4))
+	(direction (name North-South) (color Red) (count 0))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (color Yellow) (count 0))
+	(printout output "0 1 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)
+
+)
+
+(defrule all-cars2
+	(cars-present (direction East-West))
+	(cars-present (direction North-South))
+	(direction (name East-West) (color Red) (count 0))
+	?f1 <- (direction (name North-South) (color Green) (count 4))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (color Yellow) (count 0))
+	(printout output "0 0 1 0 1 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)
+)
+
+(defrule all-cars3
+	?f0 <- (cars-present (direction East-West))
+	(cars-present (direction North-South))
+	?f1 <- (direction (name East-West) (color Green) (count ?x))
+	(direction (name North-South) (color Red) (count 0))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+
+=>
+	(modify ?f1 (count (+ ?x 1)))
+	(printout output "1 0 0 0 0 1" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)
+	(retract ?f0)
+	(modify ?s1 (occupied No))
+	(modify ?s2 (occupied No))
+	(modify ?s3 (occupied No))
+	(modify ?s4 (occupied No))
+)
+
+(defrule all-cars4
+	(cars-present (direction East-West))
+	?f0 <- (cars-present (direction North-South))
+	(direction (name East-West) (color Red) (count 0))
+	?f1 <- (direction (name North-South) (color Green) (count ?x))
+
+	?s1 <- (state (name 1) (occupied ?a))
+	?s2 <- (state (name 2) (occupied ?b))
+	?s3 <- (state (name 3) (occupied ?c))
+	?s4 <- (state (name 4) (occupied ?d))
+	?s5 <- (state (name 5) (occupied ?e))
+	?s6 <- (state (name 6) (occupied ?f))
+	?s7 <- (state (name 7) (occupied ?g))
+	?s8 <- (state (name 8) (occupied ?h))
+=>
+	(modify ?f1 (count (+ ?x 1)))
+	(printout output "0 0 1 1 0 0" crlf)
+	(Readline ?s1 ?s2 ?s3 ?s4 ?s5 ?s6 ?s7 ?s8)
+	(retract ?f0)
+	(modify ?s5 (occupied No))
+	(modify ?s6 (occupied No))
+	(modify ?s7 (occupied No))
+	(modify ?s8 (occupied No))
+)
+
+
+
